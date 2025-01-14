@@ -1,6 +1,6 @@
 // Adapted from codepen by Amagi: https://codepen.io/fand/pen/Vwojwqm
 
-async function datamosh(source, params) {
+export async function datamosh(source, params) {
 	params = params || {
 		speed: 2,
 	};
