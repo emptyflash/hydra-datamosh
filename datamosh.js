@@ -29,17 +29,15 @@ export async function datamosh(source, params) {
 		src: canvas
 	})
 	const ctx = canvas.getContext("2d");
-
-	const encoder = new VideoEncoder({
+	encoder = new VideoEncoder({
 		output: handleEncodedChunk,
 		error: (err) => console.error("Encoder error:", err),
 	});
 
-	const decoder = new VideoDecoder({
+	decoder = new VideoDecoder({
 		output: handleDecodedFrame,
 		error: (err) => console.error("Decoder error:", err),
 	});
-
 	decoder.configure({
 		codec: "vp8",
 	});
@@ -50,10 +48,10 @@ export async function datamosh(source, params) {
 			const width = source.src.videoWidth || source.src.width
 			const height = source.src.videoHeight || source.src.height
 			if (width > 0 && height > 0) {
-				if (encoder.state === 'unconfigured') {
+				if (window.encoder.state === 'unconfigured') {
 					canvas.width = width;
 					canvas.height = height;
-					encoder.configure({
+					window.encoder.configure({
 						codec: "vp8",
 						width,
 						height,
@@ -64,22 +62,22 @@ export async function datamosh(source, params) {
 				const frame = new VideoFrame(source.src, {
 					timestamp: performance.now() * 1000,
 				});
-				encoder.encode(frame, {
+				window.encoder.encode(frame, {
 					keyFrame: params.keyFrame
 				});
 				params.keyFrame = false;
 				frame.close();
 			}
 		}
-		return requestAnimationFrame(processFrame);
+		window.datamoshRequest = requestAnimationFrame(processFrame);
 	}
 
 	function handleEncodedChunk(chunk) {
 		if (chunk.type === "key") {
-			decoder.decode(chunk);
+			window.decoder.decode(chunk);
 		} else {
 			for (let i = 0; i < params.speed; i++) {
-				decoder.decode(chunk);
+				window.decoder.decode(chunk);
 			}
 		}
 	}
@@ -90,9 +88,9 @@ export async function datamosh(source, params) {
 		frame.close();
 	}
 
-  if (window.datamoshRequest) {
-    cancelAnimationFrame(window.datamoshRequest)
-  }
-	window.datamoshRequest = processFrame(); // Start encoding and decoding
+	if (window.datamoshRequest) {
+		cancelAnimationFrame(window.datamoshRequest)
+	}
+	processFrame(); // Start encoding and decoding
 	return newSource;
 }
