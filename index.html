@@ -8,12 +8,12 @@ canvas { width: 100%; }
 
     <script src="https://unpkg.com/hydra-synth"></script>
     <script type="module">
-import datamoshSource from './datamosh.js'
+import {datamosh} from './datamosh.js'
 (async () => {
   const hydraCanvas = document.getElementById("hydraCanvas");
   var hydra = new Hydra({ canvas: hydraCanvas, detectAudio: false })
   await s0.initVideo('https://content.jwplatform.com/videos/N4X1NkIR-1hon4Bsu.mp4')
-  await datamoshSource(s0, s1)
+  await datamosh(s0, {hydra})
   src(o0).diff(src(s0).luma()).modulateScale(noise(1), .1).scale(1.01).out()
 })()
     </script>

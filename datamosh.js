@@ -20,7 +20,7 @@ export async function datamosh(source, params) {
 		});
 		source = datamoshSource;
 	}
-	const newSource = hydraSynth.createSource(hydraSynth.s.length);
+	const newSource = hydra.createSource(hydra.s.length);
 	let canvas = document.getElementById("datamoshCanvas");
 	if (!canvas) {
 		canvas = document.createElement("canvas");
@@ -71,7 +71,7 @@ export async function datamosh(source, params) {
 				frame.close();
 			}
 		}
-		requestAnimationFrame(processFrame);
+		return requestAnimationFrame(processFrame);
 	}
 
 	function handleEncodedChunk(chunk) {
@@ -86,10 +86,13 @@ export async function datamosh(source, params) {
 
 	function handleDecodedFrame(frame) {
 		// Draw the decoded frame onto the canvas
-		ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+		ctx.drawImage(frame, 0, 0);
 		frame.close();
 	}
 
-	processFrame(); // Start encoding and decoding
+  if (window.datamoshRequest) {
+    cancelAnimationFrame(window.datamoshRequest)
+  }
+	window.datamoshRequest = processFrame(); // Start encoding and decoding
 	return newSource;
 }
