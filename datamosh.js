@@ -29,12 +29,12 @@ export async function datamosh(source, params) {
 		src: canvas
 	})
 	const ctx = canvas.getContext("2d");
-	encoder = new VideoEncoder({
+	const encoder = new VideoEncoder({
 		output: handleEncodedChunk,
 		error: (err) => console.error("Encoder error:", err),
 	});
 
-	decoder = new VideoDecoder({
+	const decoder = new VideoDecoder({
 		output: handleDecodedFrame,
 		error: (err) => console.error("Decoder error:", err),
 	});
@@ -48,10 +48,10 @@ export async function datamosh(source, params) {
 			const width = source.src.videoWidth || source.src.width
 			const height = source.src.videoHeight || source.src.height
 			if (width > 0 && height > 0) {
-				if (window.encoder.state === 'unconfigured') {
+				if (encoder.state === 'unconfigured') {
 					canvas.width = width;
 					canvas.height = height;
-					window.encoder.configure({
+					encoder.configure({
 						codec: "vp8",
 						width,
 						height,
@@ -62,7 +62,7 @@ export async function datamosh(source, params) {
 				const frame = new VideoFrame(source.src, {
 					timestamp: performance.now() * 1000,
 				});
-				window.encoder.encode(frame, {
+				encoder.encode(frame, {
 					keyFrame: params.keyFrame
 				});
 				params.keyFrame = false;
