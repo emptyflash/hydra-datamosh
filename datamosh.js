@@ -74,10 +74,10 @@ export async function datamosh(source, params) {
 
 	function handleEncodedChunk(chunk) {
 		if (chunk.type === "key") {
-			window.decoder.decode(chunk);
+			decoder.decode(chunk);
 		} else {
 			for (let i = 0; i < params.speed; i++) {
-				window.decoder.decode(chunk);
+				decoder.decode(chunk);
 			}
 		}
 	}
