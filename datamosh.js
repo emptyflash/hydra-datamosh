@@ -13,15 +13,17 @@ export async function datamosh(inputSource, params) {
   const existingSource = window.datamoshedSources[getKey(inputSource)];
   if (!existingSource) {
     let source = inputSource;
-    params = params || {
-      speed: 2,
-    };
+    params = params || {};
+    params.speed = params.speed || 2;
     const hydra = params.hydra || window.hydraSynth;
     if (typeof source === 'function') {
       if (!window.newHydra) {
+        const newHydraCanvas = document.createElement("canvas");
         const newHydra = new Hydra({
           makeGlobal: false,
           autoLoop: false,
+          detectAudio: false,
+          canvas: newHydraCanvas,
         });
         window.newHydra = newHydra;
       }
@@ -34,10 +36,13 @@ export async function datamosh(inputSource, params) {
     }
     const newSource = hydra.createSource(hydra.s.length);
     let canvas = document.getElementById("datamoshCanvas");
-    const width = source.src.videoWidth || source.src.width
-    const height = source.src.videoHeight || source.src.height
+    const width = source.src?.videoWidth || source.src?.width || source.width
+    const height = source.src?.videoHeight || source.src?.height || source.height
     if (!canvas) {
-      canvas = new OffscreenCanvas(width, height);
+      canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.setAttribute("id", "datamoshCanvas")
     }
     await newSource.init({
       src: canvas

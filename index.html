@@ -13,8 +13,11 @@ import {datamosh} from './datamosh.js'
   const hydraCanvas = document.getElementById("hydraCanvas");
   var hydra = new Hydra({ canvas: hydraCanvas, detectAudio: false })
   await s0.initVideo('https://content.jwplatform.com/videos/N4X1NkIR-1hon4Bsu.mp4')
-  await datamosh(s0, {hydra})
-  src(o0).diff(src(s0).luma()).modulateScale(noise(1), .1).scale(1.01).out()
+  const newHydraSource = await datamosh((h) => h.noise(1).out(), {hydra})
+  const newVideoSource = await datamosh(s0, {hydra})
+  src(newHydraSource).out(o0)
+  src(newVideoSource).out(o1)
+  render()
 })()
     </script>
     </head>
